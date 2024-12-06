@@ -58,11 +58,12 @@ public class SwerveModule {
         mDriveMotor.getConfigurator().setPosition(0.0);
     }
 
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
-        desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+        desiredState.optimize(getState().angle); // Use instance method
         mAngleMotor.setControl(anglePosition.withPosition(desiredState.angle.getRotations()));
         setSpeed(desiredState, isOpenLoop);
     }
+    
 
     public void setAngleOffset(){
         this.angleOffset  = new Rotation2d(Math.PI);

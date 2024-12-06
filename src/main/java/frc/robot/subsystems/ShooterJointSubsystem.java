@@ -92,7 +92,7 @@ public class ShooterJointSubsystem {
     }
 
     public double getCurrentAngle() {
-        return -((boreEncoder.getAbsolutePosition() * 360) - 150);
+        return -((boreEncoder.get() * 360) - 150);
     }
 
     public void setTarget(double target) {
