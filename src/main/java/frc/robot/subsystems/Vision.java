@@ -30,7 +30,13 @@ public class Vision extends SubsystemBase {
     public Vision() {
         camera = new PhotonCamera("MicrosoftLifeCamHD-3000");
         camera.setDriverMode(false);
-        cameraPipelineResult = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1);
+
+        if(camera.getAllUnreadResults().size() ==0){
+            cameraPipelineResult = camera.getAllUnreadResults().get(0);
+        }else{
+            cameraPipelineResult = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
+        }
+
         aprilTagFieldLayout =  AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
         robotToCam = Constants.VisionConstants.robotToCamTranslation;
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, robotToCam);
@@ -64,7 +70,11 @@ public class Vision extends SubsystemBase {
      * Blue Alliance: 7
      */
     public Translation3d getDistFromScoringTag(){
-        PhotonTrackedTarget x = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1).getBestTarget();
+        if(camera.getAllUnreadResults().size() ==0){
+            cameraPipelineResult = camera.getAllUnreadResults().get(0);
+        }else{
+            cameraPipelineResult = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
+        }
         //if (camera.getLatestResult().hasTargets()){
         if (x != null) {
             if((x.getFiducialId() == 4) || (x.getFiducialId() == 7) || (x.getFiducialId() == 8) ||(x.getFiducialId() == 3)){
@@ -94,7 +104,11 @@ public class Vision extends SubsystemBase {
 
 
     public double getYawOfBestTarget() {
-        PhotonTrackedTarget x = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1).getBestTarget();
+        if(camera.getAllUnreadResults().size() ==0){
+            cameraPipelineResult = camera.getAllUnreadResults().get(0);
+        }else{
+            cameraPipelineResult = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size()-1);
+        }
         //if (camera.getLatestResult().hasTargets()){
         if (x != null) {
         // if (camera.getLatestResult().hasTargets()) {
