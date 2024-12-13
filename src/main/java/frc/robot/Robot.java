@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    System.out.println(s_Swerve.getTotalDist());
+    // System.out.println(s_Swerve.getTotalDist());
 
     configureButtonBindings();
     callPeriodic();
@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
     }
 
     if (operator.getYButton()){
-      m_NoteTransitSubsystem.setVariableAngle(s_Swerve.getTotalDist());
+      // m_NoteTransitSubsystem.setVariableAngle(s_Swerve.getTotalDist());
       
     }
 
