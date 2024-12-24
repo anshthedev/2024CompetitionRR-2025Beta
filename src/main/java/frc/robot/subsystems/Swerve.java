@@ -9,11 +9,8 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -38,7 +35,6 @@ public class Swerve implements Subsystem{
     private SlewRateLimiter m_xSlewRateLimiter = new SlewRateLimiter(linearAcceleration, -linearAcceleration, 0);
     private SlewRateLimiter m_ySlewRateLimiter = new SlewRateLimiter(linearAcceleration, -linearAcceleration, 0);
 
-    private PIDController angleHoldingPIDController = new PIDController(0.0004, 0, 0.001);
     private PIDController xController = new PIDController(0.6, 0, 0);
     private PIDController yController = new PIDController(0.6, 0, 0);
     private PIDController thetaController = new PIDController(0.035, 0, 0);
@@ -68,21 +64,19 @@ public class Swerve implements Subsystem{
         swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d());
     }
 
-public void setDriveOffsets(){
-    mSwerveMods[0].setAngleOffset();
-    mSwerveMods[1].setAngleOffset();
-    mSwerveMods[2].setAngleOffset();
-    mSwerveMods[3].setAngleOffset();
-
-
-}
+    public void setDriveOffsets(){
+        mSwerveMods[0].setAngleOffset();
+        mSwerveMods[1].setAngleOffset();
+        mSwerveMods[2].setAngleOffset();
+        mSwerveMods[3].setAngleOffset();
+    }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         double xSpeed = m_xSlewRateLimiter.calculate(translation.getX() * speedMultiplier);
-        SmartDashboard.putNumber("xTarget", translation.getX());
         double ySpeed = m_ySlewRateLimiter.calculate(translation.getY() * speedMultiplier);
+        SmartDashboard.putNumber("xTarget", translation.getX());
         SmartDashboard.putNumber("yTarget", translation.getX());
-        //SmartDashboard.putNumber("RotationTarget", rotation);
+        SmartDashboard.putNumber("RotationTarget", rotation);
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -104,15 +98,6 @@ public void setDriveOffsets(){
         }
     }
            
-    /* Used by SwerveControllerCommand in Auto */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, desiredSpeed);
-        
-        for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-        }
-    }    
-
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -192,9 +177,9 @@ public void setDriveOffsets(){
     public void periodicValues(){
         swervePoseEstimator.update(getGyroYaw(), getModulePositions());
         for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + "CANcoder", mod.getCANcoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + "Angle", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + "Velocity", mod.getState().speedMetersPerSecond);    
         }
     }
 
@@ -212,60 +197,8 @@ public void setDriveOffsets(){
         );
     }
 
-    public void visionDriveToPoint(double targetX, double targetY, double targetTheta) {
-        double x = getPose().getX();
-        double y = getPose().getY();
-        double yaw = getPose().getRotation().getDegrees();
-
-        xController.setSetpoint(targetX);
-        yController.setSetpoint(targetY);
-
-        if (targetTheta == 0) {
-            if (yaw > 180) {
-                thetaController.setSetpoint(360);
-            } else {
-                thetaController.setSetpoint(0);
-            }
-        } else {
-            thetaController.setSetpoint(targetTheta);
-        }
-
-        double rotation = thetaController.calculate(yaw);
-        double xCorrection = xController.calculate(x);
-        double yCorrection = yController.calculate(y);
-
-        if (xController.atSetpoint() && yController.atSetpoint()){
-            xCorrection = 0;
-            yCorrection = 0;
-        }
-        if(thetaController.atSetpoint()){
-            rotation = 0;
-        }
-
-    }
-
-    // public void visionAlign() {
-    //     if (visionToggle) {
-    //         setHeading(new Rotation2d(Math.toDegrees(m_vision.getYawOfBestTarget())));
-    //     }
-    //     visionToggle = false;
-    //     thetaController.setSetpoint(0);
-    //     double rotation = thetaController.calculate(getPose().getRotation().getDegrees());
-
-    //     if(thetaController.atSetpoint()){
-    //         rotation = 0;
-    //     }
-
-    //     driveAuto(
-    //         new Translation2d(0, 0).times(Constants.Swerve.maxAutoSpeed), 
-    //         -rotation, 
-    //         true, 
-    //         false
-    //     );
-    // }
     public void periodic(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
         teleopSwerve(translationSup, strafeSup, rotationSup, robotCentricSup);
-          
         SmartDashboard.putNumber("X Pose", getPose().getX());
         SmartDashboard.putNumber("Y Pose", getPose().getY());
         SmartDashboard.putNumber("Drive Angle", getPose().getRotation().getDegrees());
