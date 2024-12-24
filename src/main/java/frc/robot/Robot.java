@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final NoteTransitSubsystem m_NoteTransitSubsystem = NoteTransitSubsystem.getInstance();
+    // private final NoteTransitSubsystem m_NoteTransitSubsystem = NoteTransitSubsystem.getInstance();
     
     /* autos */
     MCRCommand twoNoteCenter;
@@ -165,8 +165,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     //s_Swerve.setDriveOffsets();
     CommandScheduler.getInstance().cancelAll();
-    m_NoteTransitSubsystem.stopShooter();
-    m_NoteTransitSubsystem.setRestPosition();
+    // m_NoteTransitSubsystem.stopShooter();
+    // m_NoteTransitSubsystem.setRestPosition();
     s_Swerve.zeroGyro();
     if (DriverStation.getAlliance().equals(Alliance.Red)) {
       s_Swerve.setHeading(new Rotation2d(Math.toDegrees(Math.PI)));
@@ -212,12 +212,12 @@ public class Robot extends TimedRobot {
 
     /* Operator Related */
     if (operator.getAButtonReleased()) {
-      m_NoteTransitSubsystem.setRestPosition();
+      // m_NoteTransitSubsystem.setRestPosition();
       // if Button A is released, the arm and wrist will go to the rest position
     }
 
      if (operator.getBButtonReleased()) {
-      m_NoteTransitSubsystem.setStageShootingPosition();
+      // m_NoteTransitSubsystem.setStageShootingPosition();
       // if Button X is released, the arm and wrist will go to the climb final position
     }
 
@@ -227,34 +227,34 @@ public class Robot extends TimedRobot {
     }
 
     if (operator.getLeftBumperButtonReleased()) {
-      m_NoteTransitSubsystem.toggleShooter();
+      // m_NoteTransitSubsystem.toggleShooter();
       // if the left bumper is released, the arm and wrist will go to the speaker position
     }
 
     if (operator.getRightBumperButtonReleased()) {
-      m_NoteTransitSubsystem.enableIntake();
+      // m_NoteTransitSubsystem.enableIntake();
     }
     else if (operator.getBackButton()) {
-      m_NoteTransitSubsystem.quickOuttake();
+      // m_NoteTransitSubsystem.quickOuttake();
     }
     // else {
     //   m_NoteTransitSubsystem.disableIntake();
     // }
 
     if (operator.getStartButtonReleased()) {
-      m_NoteTransitSubsystem.setAMPPosition();
+      // m_NoteTransitSubsystem.setAMPPosition();
     }
 
     if (shooterPosition.getAsBoolean()) {
-      m_NoteTransitSubsystem.setSpeakerPosition();
+      // m_NoteTransitSubsystem.setSpeakerPosition();
     }
     if (intakePosition.getAsBoolean()) {
-      m_NoteTransitSubsystem.setPickupPosition();
+      // m_NoteTransitSubsystem.setPickupPosition();
     }
   }
 
     public void callPeriodic(){
-      m_NoteTransitSubsystem.periodic();
+      // m_NoteTransitSubsystem.periodic();
     }
 
     // public boolean intakeToggle(){
