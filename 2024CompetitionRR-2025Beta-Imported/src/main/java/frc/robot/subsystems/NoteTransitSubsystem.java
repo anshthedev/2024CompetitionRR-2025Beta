@@ -71,7 +71,7 @@ public class NoteTransitSubsystem {
     //Sets joints to rest location, and sets the intake speed to the off 
     public void setRestPosition(){
         m_IntakeJointSubsystem.setTarget(Constants.JointConstants.intakeStart);
-        m_IntakeSubsystem.stopintake();
+        m_IntakeSubsystem.stopIntake();
         curPosition = positions.rest;
     }
 
@@ -113,7 +113,7 @@ public class NoteTransitSubsystem {
 
     //Turns off the intake
     public void disableIntake(){
-        m_IntakeSubsystem.stopintake();
+        m_IntakeSubsystem.stopIntake();
     }
 
     public void periodic() {

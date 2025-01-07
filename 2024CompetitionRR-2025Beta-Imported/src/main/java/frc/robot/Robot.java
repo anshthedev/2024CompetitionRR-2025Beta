@@ -219,7 +219,7 @@ public class Robot extends TimedRobot {
     }
 
     if (operator.getLeftBumperButtonReleased()) {
-      m_IntakeSubsystem.stopintake();
+      m_IntakeSubsystem.stopIntake();
       System.out.println("Left Bumper Released");
       System.out.println(m_IntakeSubsystem.getSpeed());
       // if the left bumper is released, the arm and wrist will go to the speaker position
